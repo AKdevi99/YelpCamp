@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp').then(() => {
   });
 
 
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 // app.use(express.json());
 
 app.get('/',(req,res)=>{
@@ -30,6 +30,13 @@ app.get('/campgrounds',async (req,res)=>{
 
 app.get("/campgrounds/new",(req,res)=>{
     res.render("campgrounds/new");
+})
+
+app.post('/campgrounds',async(req,res)=>{
+    const camp = new  Campground(req.body.campground);
+    await camp.save();
+    
+
 })
 app.get('/campgrounds/:id',async (req,res)=>{
 
