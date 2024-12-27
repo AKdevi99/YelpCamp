@@ -4,9 +4,11 @@ const path = require('path')
 const mongoose = require('mongoose');
 var methodOverride = require('method-override')
 const Campground = require('./models/campground');
+const ejsmate = require('ejs-mate');
 
 
 
+app.engine('ejs',ejsmate);
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'views'));
 
