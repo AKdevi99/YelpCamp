@@ -18,6 +18,8 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp').then(() => {
 
 
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));//method override
+
 // app.use(express.json());
 
 app.get('/',(req,res)=>{
@@ -36,7 +38,7 @@ app.get("/campgrounds/new",(req,res)=>{
 app.post('/campgrounds',async(req,res)=>{
     const camp = new  Campground(req.body.campground);
     await camp.save();
-    
+    res.redirect("/campgrounds");
 
 })
 app.get('/campgrounds/:id',async (req,res)=>{
@@ -62,9 +64,6 @@ app.put("/campgrounds/:id",async(req,res)=>{
 })
 
 
-
-
-
 app.get('/makecampground',async (req,res)=>{
     const camp = new Campground({
         title:"my backyard",description:"cheap camping"
@@ -73,6 +72,14 @@ app.get('/makecampground',async (req,res)=>{
     await camp.save();
     res.send(camp);
 })
+
+
+app.delete('/campgrounds/:id',async(req,res)=>{
+    const {id} = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect('/campgrounds');
+});
+
 
 app.listen(3000,()=>{
     console.log("Listening to port 3000!");
