@@ -2,9 +2,12 @@ const express = require('express');
 const app = express();
 const path = require('path')
 const mongoose = require('mongoose');
+const catchasync = require('./utils/catchasync');
+const expresserror = require('./utils/expresserror');
 var methodOverride = require('method-override')
 const Campground = require('./models/campground');
 const ejsmate = require('ejs-mate');
+
 
 
 
@@ -28,45 +31,46 @@ app.get('/',(req,res)=>{
     res.render('home');
 })
 
-app.get('/campgrounds',async (req,res)=>{
+app.get('/campgrounds',catchasync(async (req,res,next)=>{
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index',{ campgrounds });
-})
+}))
 
 app.get("/campgrounds/new",(req,res)=>{
     res.render("campgrounds/new");
 })
 
-app.post('/campgrounds',async(req,res)=>{
+app.post('/campgrounds',catchasync(async(req,res,next)=>{
+    if(!req.body.campground) throw new expresserror("invalid campground data",400);
     const camp = new  Campground(req.body.campground);
-    await camp.save();
-    res.redirect("/campgrounds");
+    const campground = await camp.save();
+    res.redirect(`/campgrounds/${campground._id}`);
 
-})
-app.get('/campgrounds/:id',async (req,res)=>{
+}));
+app.get('/campgrounds/:id',catchasync(async (req,res,next)=>{
 
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show',{campground});
 
 }
-);
+));
 
-app.get("/campgrounds/:id/edit",async(req,res)=>{
+app.get("/campgrounds/:id/edit",catchasync(async(req,res,next)=>{
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit',{campground});
-});
+}));
 
 
 
-app.put("/campgrounds/:id",async(req,res)=>{
+app.put("/campgrounds/:id",catchasync(async(req,res,next)=>{
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground});
     res.redirect(`/campgrounds/${campground.id}`)
 
-})
+}))
 
 
-app.get('/makecampground',async (req,res)=>{
+app.get('/makecampground',async (req,res,next)=>{
     const camp = new Campground({
         title:"my backyard",description:"cheap camping"
     })
@@ -76,11 +80,23 @@ app.get('/makecampground',async (req,res)=>{
 })
 
 
-app.delete('/campgrounds/:id',async(req,res)=>{
+app.delete('/campgrounds/:id',catchasync(async(req,res,next)=>{
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
-});
+}));
+
+
+app.all('*',(req,res,next)=>{
+    next(new expresserror('page not found',404));
+})
+
+//adding a error handler
+app.use((err,req,res,next)=>{
+    const {statusCode=500,message = " something went wrong"} = err;
+    res.status(statusCode).send(message);
+    
+})
 
 
 app.listen(3000,()=>{
