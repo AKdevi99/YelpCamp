@@ -8,7 +8,7 @@ var methodOverride = require('method-override')
 const Campground = require('./models/campground');
 const ejsmate = require('ejs-mate');
 const joi = require('joi');
-
+const {campgroundSchema} = require('./schemas');
 
 
 
@@ -28,6 +28,21 @@ app.use(methodOverride("_method"));//method override
 
 // app.use(express.json());
 
+const validateCampground = (req,res,next)=>{
+    
+
+        
+    const {error} = campgroundSchema.validate(req.body);
+    if(error){
+        const msg = error.details.map(el => el.message).join(',')
+        throw new expresserror(msg,400);
+    }else{
+        next()//very imp to go to next route
+    }
+    
+    
+}
+
 app.get('/',(req,res)=>{
     res.render('home');
 })
@@ -41,26 +56,10 @@ app.get("/campgrounds/new",(req,res)=>{
     res.render("campgrounds/new");
 })
 
-app.post('/campgrounds',catchasync(async(req,res,next)=>{
+app.post('/campgrounds',validateCampground,catchasync(async(req,res,next)=>{
     // if(!req.body.campground) throw new expresserror("invalid campground data",400);
     //creating joi schema
-    const campgroundSchema = joi.object({
-        campground: joi.object({
-            title: joi.string().required(),
-            price: joi.number().required().min(0),
-            image: joi.string().required(),
-            description:joi.string().required(),
-            location:joi.string().required(),
-
-        }).required()})
-
-        
-    const {error} = campgroundSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new expresserror(msg,400);
-    }
-    console.log(result);
+   
 
 
 
@@ -84,7 +83,7 @@ app.get("/campgrounds/:id/edit",catchasync(async(req,res,next)=>{
 
 
 
-app.put("/campgrounds/:id",catchasync(async(req,res,next)=>{
+app.put("/campgrounds/:id",validateCampground,catchasync(async(req,res,next)=>{
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground});
     res.redirect(`/campgrounds/${campground.id}`)
