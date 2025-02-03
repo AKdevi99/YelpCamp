@@ -8,7 +8,9 @@ var methodOverride = require('method-override')
 const Campground = require('./models/campground');
 const ejsmate = require('ejs-mate');
 const joi = require('joi');
-const {campgroundSchema} = require('./schemas');
+const {campgroundSchema,reviewSchema} = require('./schemas');
+const Review = require('./models/review');
+const review = require('./models/review');
 
 
 
@@ -43,6 +45,16 @@ const validateCampground = (req,res,next)=>{
     
 }
 
+const validateReview = (req,res,next)=>{
+    const {error} = reviewSchema.validate(req.body);
+    if(error){
+        const msg = error.details.map(el => el.message).join(',')
+        throw new expresserror(msg,400);
+    }else{
+        next()//very imp to go to next route
+    }
+}
+
 app.get('/',(req,res)=>{
     res.render('home');
 })
@@ -70,7 +82,7 @@ app.post('/campgrounds',validateCampground,catchasync(async(req,res,next)=>{
 }));
 app.get('/campgrounds/:id',catchasync(async (req,res,next)=>{
 
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate('reviews');
     res.render('campgrounds/show',{campground});
 
 }
@@ -106,6 +118,25 @@ app.delete('/campgrounds/:id',catchasync(async(req,res,next)=>{
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 }));
+
+//adding review routers
+app.post("/campgrounds/:id/reviews",validateReview,catchasync(async(req,res)=>{
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+})
+);
+
+app.delete('/campgrounds/:id/reviews/:reviewId',catchasync(async(req,res)=>{
+    const{id,reviewId} = req.params;
+    await Campground.findByIdAndUpdate(id,{$pull:{reviews:reviewId}})
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`)
+}))
+
 
 
 app.all('*',(req,res,next)=>{
