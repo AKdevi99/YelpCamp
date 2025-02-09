@@ -8,9 +8,12 @@ var methodOverride = require('method-override')
 const Campground = require('./models/campground');
 const ejsmate = require('ejs-mate');
 const joi = require('joi');
-const {campgroundSchema,reviewSchema} = require('./schemas');
-const Review = require('./models/review');
-const review = require('./models/review');
+
+
+
+
+const reviewRouter = require('./routes/reviews');
+const campgroundsRouter = require('./routes/campgrounds');
 
 
 
@@ -30,77 +33,16 @@ app.use(methodOverride("_method"));//method override
 
 // app.use(express.json());
 
-const validateCampground = (req,res,next)=>{
-    
-
-        
-    const {error} = campgroundSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new expresserror(msg,400);
-    }else{
-        next()//very imp to go to next route
-    }
-    
-    
-}
-
-const validateReview = (req,res,next)=>{
-    const {error} = reviewSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new expresserror(msg,400);
-    }else{
-        next()//very imp to go to next route
-    }
-}
 
 app.get('/',(req,res)=>{
     res.render('home');
 })
 
-app.get('/campgrounds',catchasync(async (req,res,next)=>{
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index',{ campgrounds });
-}))
 
-app.get("/campgrounds/new",(req,res)=>{
-    res.render("campgrounds/new");
-})
+app.use('/campgrounds',campgroundsRouter);
 
-app.post('/campgrounds',validateCampground,catchasync(async(req,res,next)=>{
-    // if(!req.body.campground) throw new expresserror("invalid campground data",400);
-    //creating joi schema
-   
+app.use('/campgrounds/:id/reviews',reviewRouter);
 
-
-
-    const camp = new  Campground(req.body.campground);
-    const campground = await camp.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-
-}));
-app.get('/campgrounds/:id',catchasync(async (req,res,next)=>{
-
-    const campground = await Campground.findById(req.params.id).populate('reviews');
-    res.render('campgrounds/show',{campground});
-
-}
-));
-
-app.get("/campgrounds/:id/edit",catchasync(async(req,res,next)=>{
-    const campground = await Campground.findById(req.params.id);
-    res.render('campgrounds/edit',{campground});
-}));
-
-
-
-app.put("/campgrounds/:id",validateCampground,catchasync(async(req,res,next)=>{
-    const {id} = req.params;
-    const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground});
-    res.redirect(`/campgrounds/${campground.id}`)
-
-}))
 
 
 app.get('/makecampground',async (req,res,next)=>{
@@ -113,29 +55,6 @@ app.get('/makecampground',async (req,res,next)=>{
 })
 
 
-app.delete('/campgrounds/:id',catchasync(async(req,res,next)=>{
-    const {id} = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect('/campgrounds');
-}));
-
-//adding review routers
-app.post("/campgrounds/:id/reviews",validateReview,catchasync(async(req,res)=>{
-    const campground = await Campground.findById(req.params.id);
-    const review = new Review(req.body.review);
-    campground.reviews.push(review);
-    await review.save();
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-})
-);
-
-app.delete('/campgrounds/:id/reviews/:reviewId',catchasync(async(req,res)=>{
-    const{id,reviewId} = req.params;
-    await Campground.findByIdAndUpdate(id,{$pull:{reviews:reviewId}})
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/campgrounds/${id}`)
-}))
 
 
 
