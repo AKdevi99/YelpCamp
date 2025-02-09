@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router(mer)
+const router = express.Router()
 const {reviewSchema} = require('../schemas');
 const Campground = require('../models/campground');
 const Review = require('../models/review');

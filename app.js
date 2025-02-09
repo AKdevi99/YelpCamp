@@ -30,8 +30,7 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp').then(() => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));//method override
-
-// app.use(express.json());
+app.use(express.static('public'));
 
 
 app.get('/',(req,res)=>{
