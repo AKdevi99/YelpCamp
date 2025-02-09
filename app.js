@@ -8,6 +8,9 @@ var methodOverride = require('method-override')
 const Campground = require('./models/campground');
 const ejsmate = require('ejs-mate');
 const joi = require('joi');
+const session = require('express-session');
+const flash = require('connect-flash');
+
 
 
 
@@ -30,7 +33,31 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp').then(() => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));//method override
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname,'public')));
+const sessionConfig = {
+    secret:'thisshouldbeasecret!',
+    resave:false,
+    saveUninitialized:true,
+    cookie: {
+        httpOnly:true,
+        expires:Date.now() + 1000*60*60*24*7,
+        maxAge:1000*60*60*24*7
+    }
+
+}
+app.use(session(sessionConfig));
+app.use(flash());
+
+app.use((req, res, next) => {
+    const successMessages = req.flash("success");
+    const errorMessages = req.flash("error");
+
+    res.locals.success = successMessages;
+    res.locals.error = errorMessages;
+
+    next();
+});
+
 
 
 app.get('/',(req,res)=>{
@@ -52,8 +79,6 @@ app.get('/makecampground',async (req,res,next)=>{
     await camp.save();
     res.send(camp);
 })
-
-
 
 
 

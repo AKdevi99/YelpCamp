@@ -36,21 +36,25 @@ router.get('/new',(req,res)=>{
 router.post('/',validateCampground,catchasync(async(req,res,next)=>{
     // if(!req.body.campground) throw new expresserror("invalid campground data",400);
     //creating joi schema
+    
 
     const camp = new  Campground(req.body.campground);
     const campground = await camp.save();
+    req.flash('success','Successfully made a campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 
 }));
 
 
-router.get('/:id',catchasync(async (req,res,next)=>{
-
+router.get('/:id', catchasync(async (req, res, next) => {
     const campground = await Campground.findById(req.params.id).populate('reviews');
-    res.render('campgrounds/show',{campground});
+    if (!campground) {
+        req.flash('error', 'Campground not found!');
+        return res.redirect('/campgrounds');
+    }
+    res.render('campgrounds/show', { campground });
+}));
 
-}
-));
 
 router.get("/:id/edit",catchasync(async(req,res,next)=>{
     const campground = await Campground.findById(req.params.id);
@@ -60,6 +64,7 @@ router.get("/:id/edit",catchasync(async(req,res,next)=>{
 router.put("/:id",validateCampground,catchasync(async(req,res,next)=>{
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground});
+    req.flash('success', 'Successfully updated campground!');
     res.redirect(`/campgrounds/${campground.id}`)
 
 }));
@@ -67,6 +72,7 @@ router.put("/:id",validateCampground,catchasync(async(req,res,next)=>{
 router.delete('/:id',catchasync(async(req,res,next)=>{
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
+    req.flash('success', 'Successfully deleted campground!');
     res.redirect('/campgrounds');
 }));
 
