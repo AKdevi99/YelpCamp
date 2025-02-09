@@ -47,6 +47,12 @@ router.post('/',validateCampground,catchasync(async(req,res,next)=>{
 
 
 router.get('/:id', catchasync(async (req, res, next) => {
+    const { id } = req.params;
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+        req.flash('error', 'Campground does not exist!');
+        return res.redirect('/campgrounds');
+    }
+
     const campground = await Campground.findById(req.params.id).populate('reviews');
     if (!campground) {
         req.flash('error', 'Campground not found!');
