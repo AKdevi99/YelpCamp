@@ -1,3 +1,8 @@
+if(process.env.NODE_ENV !== "production")
+{
+    require('dotenv').config();
+}
+
 const express = require('express');
 const app = express();
 const path = require('path')
@@ -13,6 +18,9 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+
+const multer = require('multer');
+const upload = multer({dest:'uploads/'});
 
 
 
