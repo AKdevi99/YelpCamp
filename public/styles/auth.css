@@ -1,0 +1,146 @@
+
+.register-card {
+    
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    margin-top: 10%;
+    padding: 2rem;
+    background: #5dc94c;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+
+
+.register-card {
+    width: 100%;
+    max-width: 420px; /* Adjust width for professional aesthetics */
+    margin: auto;
+    margin-top: 8%;
+    padding: 2rem;
+    background: #FFFFFF; /* Pure white for a clean UI */
+    border-radius: 12px;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.register-card h3 {
+    color: #333333; /* Dark Gray for professional look */
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+
+.register-card .form-control {
+    width: 100%;
+    max-width: 320px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E6ED;
+    background: #F9FBFF;
+    transition: 0.3s ease-in-out;
+    display: block;
+    margin: auto;
+}
+
+
+.register-card .form-control:focus {
+    border-color: #4364F7;
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(67, 100, 247, 0.3);
+}
+
+.password-wrapper {
+    max-width: 320px;
+    margin: auto;
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.3s ease-in-out;
+}
+
+.password-toggle:hover {
+    color: #0052D4;
+}
+
+/* ---- Professional Button Styling ---- */
+.btn-register {
+    max-width: 320px;
+    display: block;
+    margin: auto;
+    background: linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC);
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 82, 212, 0.3);
+}
+
+/* ---- Hover & Click Effect ---- */
+.btn-register:hover {
+    transform: scale(1.04);
+    background: linear-gradient(135deg, #0040A1, #3458D0, #5D94F8);
+    box-shadow: 0px 6px 14px rgba(0, 82, 212, 0.5);
+}
+
+.btn-register:active {
+    transform: scale(0.97);
+    box-shadow: 0px 2px 5px rgba(0, 82, 212, 0.6);
+}
+
+/* ---- Smooth Fade-in Animation ---- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-card {
+    animation: fadeIn 0.7s ease-in-out;
+}
+
+/* ---- Ripple Click Animation ---- */
+.btn-register {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-register:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.btn-register:active:after {
+    opacity: 1;
+    transform: scale(1.2);
+}

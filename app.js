@@ -21,6 +21,7 @@ const User = require('./models/user');
 
 const reviewRouter = require('./routes/reviews');
 const campgroundsRouter = require('./routes/campgrounds');
+const userRouter = require('./routes/users');
 
 
 
@@ -75,10 +76,12 @@ app.get('/',(req,res)=>{
     res.render('home');
 })
 
+app.use('/',userRouter);
 
 app.use('/campgrounds',campgroundsRouter);
 
 app.use('/campgrounds/:id/reviews',reviewRouter);
+
 
 
 

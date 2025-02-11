@@ -6,6 +6,7 @@ const Review = require('../models/review');
 const {campgroundSchema,reviewSchema} = require('../schemas');
 const Campground = require('../models/campground');
 const expresserror = require('../utils/expresserror');
+const {isLoggedIn} = require('../middleware');
 
 
 
@@ -29,11 +30,12 @@ router.get('/',catchasync(async (req,res,next)=>{
     res.render('campgrounds/index',{ campgrounds });
 }))
 
-router.get('/new',(req,res)=>{
+router.get('/new',isLoggedIn,(req,res)=>{
+    
     res.render("campgrounds/new");
 });
 
-router.post('/',validateCampground,catchasync(async(req,res,next)=>{
+router.post('/',isLoggedIn,validateCampground,catchasync(async(req,res,next)=>{
     // if(!req.body.campground) throw new expresserror("invalid campground data",400);
     //creating joi schema
     
@@ -62,12 +64,12 @@ router.get('/:id', catchasync(async (req, res, next) => {
 }));
 
 
-router.get("/:id/edit",catchasync(async(req,res,next)=>{
+router.get("/:id/edit",isLoggedIn,catchasync(async(req,res,next)=>{
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit',{campground});
 }));
 
-router.put("/:id",validateCampground,catchasync(async(req,res,next)=>{
+router.put("/:id",isLoggedIn,validateCampground,catchasync(async(req,res,next)=>{
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground});
     req.flash('success', 'Successfully updated campground!');
@@ -75,7 +77,7 @@ router.put("/:id",validateCampground,catchasync(async(req,res,next)=>{
 
 }));
 
-router.delete('/:id',catchasync(async(req,res,next)=>{
+router.delete('/:id',isLoggedIn,catchasync(async(req,res,next)=>{
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted campground!');

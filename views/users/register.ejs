@@ -1,0 +1,99 @@
+<% layout('layouts/bollerplate')%>
+       
+    <div class="register-card">
+        <h3 class="text-center text-dark mb-4">Create an Account</h3>
+        <form action="/register" method="POST" novalidate class="validated-form">
+            <!-- Username -->
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" required>
+                <div class="valid-feedback">
+                    Looks good!
+                  </div>
+            </div>
+            
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+                <div class="valid-feedback">
+                    Looks good!
+                  </div>
+            </div>
+            
+            <!-- Password -->
+            <div class="mb-3 password-wrapper">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <span class="password-toggle" onclick="togglePassword('password')">
+                    <i class="fas fa-eye"></i>
+
+                </span>
+                <div class="valid-feedback">
+                    Looks good!
+                  </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-3 password-wrapper">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                <span class="password-toggle" onclick="togglePassword('confirmPassword')">
+                    <i class="fas fa-eye"></i>
+                </span>
+                <div class="valid-feedback">
+                    matches!
+                  </div>
+            </div>
+
+            <!-- Error Message -->
+            <p id="errorMessage" class="text-danger text-center"></p>
+
+            <!-- Register Button -->
+            <button type="submit" class="btn btn-register w-100">Register</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <small>Already have an account? <a href="/login" class="text-primary">Login</a></small>
+        </div>
+    </div>
+
+   
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            "use strict";
+        
+            // Select elements
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("confirmPassword");
+            const errorMessage = document.getElementById("errorMessage");
+            const registerButton = document.querySelector(".btn-register");
+        
+
+        
+            // Function to check password match
+            function checkPasswordMatch() {
+                if (confirmPasswordInput.value === "") {
+                    confirmPasswordInput.classList.remove("is-invalid", "is-valid");
+                    errorMessage.innerText = "";
+                    registerButton.disabled = true;
+                } else if (confirmPasswordInput.value === passwordInput.value) {
+                    confirmPasswordInput.classList.remove("is-invalid");
+                    confirmPasswordInput.classList.add("is-valid");
+                    errorMessage.innerText = "";
+                    registerButton.disabled = false;
+                } else {
+                    confirmPasswordInput.classList.remove("is-valid");
+                    confirmPasswordInput.classList.add("is-invalid");
+                    errorMessage.innerText = "Passwords do not match!";
+                    registerButton.disabled = true;
+                }
+            }
+        
+            // Listen for input changes
+            confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+        });
+        
+    </script>
+
+
