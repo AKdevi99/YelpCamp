@@ -1,12 +1,17 @@
 const { number } = require("joi");
-const { Mongoose, default: mongoose } = require("mongoose");
+const { Mongoose, default: mongoose, Schema } = require("mongoose");
 
 const schema = mongoose.Schema;
 
 
 const reviewSchema = new schema({
+
     body:String,
-    rating:Number
+    rating:Number,
+    author:{
+        type:Schema.Types.ObjectId,
+        ref:'User'
+    }
 });
 
 // reviewSchema.pre("save", function (next) {

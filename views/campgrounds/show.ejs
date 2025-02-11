@@ -35,7 +35,8 @@
         <!-- Review Form -->
         <div class="card  mb-3" style="width: 30rem;">
             <div class="card-body">
-                <h5 class="mb-3">Add a Review</h5>
+                <% if(currentUser) {%>
+                    <h5 class="mb-3">Add a Review</h5>
 
                 <!-- Star Rating System -->
                 <div class="rating">
@@ -64,13 +65,18 @@
 
                     <button type="submit" class="btn btn-primary">Submit Review</button>
                 </form>
+                    <% } %>
+
 
                 <div class="mt-3">
                     <% for (let review of campground.reviews) { %>
                     <div class="mb-4">
                         <div class="card shadow-sm border-light rounded">
                             <div class="card-body">
-                                <!-- <h5 class="card-title"><%= review.userName %> </h5> -->
+                                <h6 class="card-title reviewer-name">
+                                    <i class="fas fa-user-circle"></i> <%= review.author.username %>
+                                </h6>
+                                 
                                 <p class="card-text"><%= review.body %></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="rating">
@@ -79,9 +85,15 @@
                                         <% } %>
                                     </div>
                                 </div>
-                                <form action="/campgrounds/<%= campground._id%>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="mt-2">
-                                  <button class="btn delete-btn">&#10006;</button>
-                                </form>
+
+                                <% if(currentUser){ %>
+                                    <% if(review.author.equals(currentUser._id)) {%>
+                                        <form action="/campgrounds/<%= campground._id%>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="mt-2">
+                                          <button class="btn delete-btn">&#10006;</button>
+                                        </form>
+                                        <!-- change this acces bcz any logged user can delete  -->
+                                        <% } %>
+                                    <% } %>
                             </div>
                         </div>
                     </div>
@@ -159,6 +171,15 @@
         color: gold;
         transform: scale(1.2);
     }
+    .reviewer-name {
+        font-size: 1.1rem; /* Slightly larger font */
+        font-weight: bold;
+        color: #2c3e50; /* Dark navy color */
+        text-transform: capitalize; /* Capitalizes first letter */
+        letter-spacing: 0.5px; /* Adds slight spacing for elegance */
+        font-family: 'Poppins', sans-serif; /* Modern font */
+    }
+    
 </style>
 
 <script>
