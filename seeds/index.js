@@ -21,6 +21,7 @@ const sample = array=> array[Math.floor(Math.random() * array.length)];
         const random1000 = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random()*20)+10;
         const camp=new Campground({
+            author:'67aaf12516d235136768ac72',
             location:`${cities[random1000].city},${cities[random1000].state}`,
             title:`${sample(descriptors)} ${sample(places)}`,
             image:`https://picsum.photos/600?random=${Math.random()}`,
